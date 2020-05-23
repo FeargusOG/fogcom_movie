@@ -1,0 +1,54 @@
+{% load static %}
+
+{% if movie_list %}
+
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<table>
+    <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>IMDB Rating</th>
+        <th>IMDB Votes</th>
+        <th>Metascore</th>
+        <th>Rotten Tomatoes</th>
+        <th>Genre</th>
+        <th>Release Date</th>
+        <th>Overview</th>
+    </tr>
+    {% for movie in movie_list %}
+    <tr>
+        <td><a href="https://www.imdb.com/title/{{movie.get_imdb_id}}" target="_blank"><img src="{{ movie.get_poster_path }}" height="300" width="200" /></a></td>
+        <td>{{ movie.get_title }}</td>
+        <td>{{ movie.get_imdb_rating }}</td>
+        <td>{{ movie.get_imdb_votes }}</td>
+        {% if movie.get_metascore == -1 %}
+            <td>N/A</td>
+        {% else %}  
+            <td>{{ movie.get_metascore }}</td>
+        {%  endif %}
+        {% if movie.get_rt_rating == -1 %}
+            <td>N/A</td>
+        {% else %}  
+            <td>{{ movie.get_rt_rating }}%</td>
+        {%  endif %}
+        <td>{{ movie.get_genre }}</td>
+        <td>{{ movie.get_release_date }}</td>
+        <td>{{ movie.get_overview }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No movies are available.</p>
+{% endif %}
