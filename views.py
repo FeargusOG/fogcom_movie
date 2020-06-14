@@ -9,7 +9,9 @@ import json
 import os
 import time
 import logging
-
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 import traceback
 
 # Minimum number of IMDB votes to have - otherwise we get stuff that is too niche.
@@ -99,6 +101,8 @@ class MovieListView(generic.ListView):
             movie = self.get_movie_from_cache(movie_json["id"])
             if movie and not movie.needs_update():
                 logger.info("Movie in cache is fresh: " + movie.get_title())
+                if "tmdb" in movie.get_poster_path():
+                    self.update_poster_path(movie, self.upload_thumb_to_cloudinary(movie.get_poster_path()))
             elif self.is_movie_not_found(movie_json["id"]):
                 logger.info("Movie is not found in OMDB: " + movie_json["title"])
                 #self.set_movie_not_found_scores(movie_json["id"], movie_json["popularity"], movie_json["vote_average"])
@@ -190,8 +194,32 @@ class MovieListView(generic.ListView):
 
 
     ###
+    # Cloudinary Calls
+    ###
+    def upload_thumb_to_cloudinary(self, thumbnail_url):
+        """
+        Upload a thumbnail to the cloudinary datastore.
+        Args:
+            thumbnail_url: The url of the thumbnail to upload to cloudinary.
+        Returns:
+            string: Return the url of the image now stored in cloudinary.
+        """
+        upload_result = cloudinary.uploader.upload(thumbnail_url)
+        return upload_result['url']
+    
+    ###
     # Postgres Calls
     ###
+    def update_poster_path(self, movie, poster_path):
+        """
+        Update a the movie's poster path in the DB.
+        Args:
+            movie: The Movie object with the path to udpate.
+            poster_path: The new poster path.
+        """
+        movie.poster_path = poster_path
+        movie.save()
+
     def get_movie_from_cache(self, id):
         movie = None
         try:
@@ -258,7 +286,6 @@ class MovieListView(generic.ListView):
         url = self.get_movie_list_url(page, start_date, end_date, min_vote_count, min_rating, lang)
         logger.info(url)
         response = requests.get(url)
-        logger.info("Status Code for TMDB request: ", response.status_code)
         return response.json()
 
     ###
