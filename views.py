@@ -102,7 +102,7 @@ class MovieListView(generic.ListView):
             if movie and not movie.needs_update():
                 logger.info("Movie in cache is fresh: " + movie.get_title())
                 if "tmdb" in movie.get_poster_path():
-                    self.update_poster_path(movie, self.upload_thumb_to_cloudinary(movie.get_poster_path()))
+                    self.update_poster_path(movie, self.upload_thumb_to_cloudinary(movie_json["poster_path"]))
             elif self.is_movie_not_found(movie_json["id"]):
                 logger.info("Movie is not found in OMDB: " + movie_json["title"])
                 #self.set_movie_not_found_scores(movie_json["id"], movie_json["popularity"], movie_json["vote_average"])
