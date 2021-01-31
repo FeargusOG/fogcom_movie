@@ -1,0 +1,10 @@
+body {
+    background-color: grey
+}
+
+.img {
+    height: 200px;
+    background: #aaa;
+    max-width:100;
+    height: auto;
+  }

@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" href="{% static main.css %}" type="text/css" media="screen">
 <form action="/mft/search" method="post">
     {% csrf_token %}
     {{ form }}

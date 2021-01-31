@@ -32,6 +32,11 @@ FILTER_EXCUSIVE = 3
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+def get_mft(request):
+    if request.method == 'GET':
+        # Load the home page for this app
+        return render(request, 'movie_fortune/mft.html')
+
 def get_search_form(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
