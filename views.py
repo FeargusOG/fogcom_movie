@@ -160,6 +160,7 @@ class MovieListView(generic.ListView):
                             rt_rating = int(response_json["Ratings"][1]["Value"].replace("%", ""))
 
                     # Add the movie to the cache, even if it doesn't meet the search requirements below
+                    logger.info("Setting movie in cache with id: " + str(id))
                     movie = self.set_movie_in_cache(id, title, language, release_date, poster_path, overview, imdb_rating, imdb_votes, imdb_id, metascore, rt_rating, certification, runtime, genre, is_documentary, is_standup)
                 else:
                     logger.warning("No OMDB response for: " + title)
@@ -229,7 +230,7 @@ class MovieListView(generic.ListView):
         return movie
 
     def set_movie_in_cache(self, id, title, language, release_date, poster_path, overview, imdb_rating, imdb_votes, imdb_id, metascore, rt_rating, certification, runtime, genre, is_documentary, is_standup):
-        movie, created = Movie.objects.update_or_create(id=id, title=title, language=language, release_date=release_date, poster_path=poster_path, overview=overview, imdb_rating=imdb_rating, imdb_votes=imdb_votes, imdb_id=imdb_id, metascore=metascore, rt_rating=rt_rating, certification=certification, runtime=runtime, genre=genre, documentary=is_documentary, standup=is_standup)
+        movie, created = Movie.objects.update_or_create(id=id, defaults={'title': title, 'language':language, 'release_date':release_date, 'poster_path':poster_path, 'overview':overview, 'imdb_rating':imdb_rating, 'imdb_votes':imdb_votes, 'imdb_id':imdb_id, 'metascore':metascore, 'rt_rating':rt_rating, 'certification':certification, 'runtime':runtime, 'genre':genre, 'documentary':is_documentary, 'standup':is_standup})
         return movie
 
     def set_movie_not_found(self, id, title, language, release_date, poster_path, overview, imdb_id, tmdb_popularity, tmdb_rating):
